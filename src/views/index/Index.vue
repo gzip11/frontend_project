@@ -12,7 +12,8 @@
         <div class="toolbar">
           <el-dropdown trigger="click">
             <span class="el-dropdown-link">
-              admin
+              欢迎
+              {{store.auth.user}}
               <el-icon class="el-icon--right">
                  <arrow-down/>
                </el-icon>
@@ -36,8 +37,12 @@
 <script setup>
 import { ref,reactive } from 'vue';
 import { Menu as IconMenu, Message, Setting, ArrowDown, Close} from '@element-plus/icons-vue';
-import logo from '@/assets/img/logo-mini.png'
-import router from '@/router'
+import logo from '@/assets/img/logo-mini.png';
+import router from '@/router';
+import {userStore} from "@/stores";
+
+
+const store = userStore();
 
 const logoUrl = reactive({
   logo
@@ -57,7 +62,8 @@ const exitInfo = () => {
         ElMessage({
           type: 'success',
           message: '退出成功',
-        })
+        });
+        store.auth.user = null;
         router.push('/welcome');
       })
       .catch(() => {

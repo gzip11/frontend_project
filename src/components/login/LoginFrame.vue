@@ -46,6 +46,7 @@ import {reactive,ref,inject} from "vue";
 import router from "@/router";
 import {User,Lock} from '@element-plus/icons-vue';
 import {CommonApi,UserApi} from "@/api/api";
+import {userStore} from "@/stores";
 
 const formData = ref({
   username: '',
@@ -73,6 +74,8 @@ const errorMessage = () => {
 
 const request = inject('request');
 
+const store = userStore();
+
 const login = () => {
   if (!formData.value.username || !formData.value.password){
     ElMessage.warning("用户名或密码不能为空");
@@ -83,8 +86,12 @@ const login = () => {
     }).then(res => {
       if (res.code === 200){
         ElMessage.success(res);
+        store.auth.user = res.data.user.account;
         router.push('/home');
       }
+      },() => {
+      ElMessage.error(res.message);
+      store.auth.user = null;
       })
   }
 }
