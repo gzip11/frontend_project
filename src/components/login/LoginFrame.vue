@@ -42,9 +42,10 @@
 </template>
 
 <script setup>
-import {reactive,ref} from "vue";
+import {reactive,ref,inject} from "vue";
 import router from "@/router";
 import {User,Lock} from '@element-plus/icons-vue';
+import {CommonApi,UserApi} from "@/api/api";
 
 const formData = ref({
   username: '',
@@ -70,11 +71,21 @@ const errorMessage = () => {
   ElMessage.error('登录失败');
 }
 
+const request = inject('request');
+
 const login = () => {
-  if (formData.value.username === 'admin' && formData.value.password === 'admin'){
-    router.push('/home');
+  if (!formData.value.username || !formData.value.password){
+    ElMessage.warning("用户名或密码不能为空");
   }else{
-    errorMessage();
+      const response = request.post(CommonApi.login,{
+      account: formData.value.username,
+      password: formData.value.password,
+    }).then(res => {
+      if (res.code === 200){
+        ElMessage.success(res);
+        router.push('/home');
+      }
+      })
   }
 }
 

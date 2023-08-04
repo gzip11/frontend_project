@@ -7,19 +7,19 @@
       <div class="form-item">
         <el-form>
           <el-form-item label="账号">
-            <el-input :prefix-icon="User" size="large"/>
+            <el-input v-model="user_info.username" :prefix-icon="User" size="large" />
           </el-form-item>
           <el-form-item label="密码">
-            <el-input :prefix-icon="Lock" size="large"/>
+            <el-input v-model="user_info.password" :prefix-icon="Lock" size="large"/>
           </el-form-item>
           <el-form-item label="确认密码">
             <el-input :prefix-icon="Check" size="large"/>
           </el-form-item>
           <el-form-item label="姓名">
-            <el-input :prefix-icon="Notebook" size="large"/>
+            <el-input v-model="user_info.name" :prefix-icon="Notebook" size="large"/>
           </el-form-item>
           <el-form-item label="手机号">
-            <el-input placeholder="请输入手机号" class="input-with-select">
+            <el-input v-model="user_info.tel" placeholder="请输入手机号" class="input-with-select">
               <template #prepend>
                 <el-select size="large" v-model="value" style="width: 80px">
                   <el-option
@@ -33,9 +33,12 @@
               </template>
             </el-input>
           </el-form-item>
+          <el-form-item label="邮箱">
+            <el-input v-model="user_info.email" placeholder="请输入邮箱" :prefix-icon="Files" size="large"></el-input>
+          </el-form-item>
           <el-form-item label="验证码">
             <el-col :span="6">
-              <el-input size="large" style="width: 180px"/>
+              <el-input v-model="user_info.verificationCode" size="large" style="width: 180px"/>
             </el-col>
             <el-col :span="6" :offset="9">
               <el-button size="large" type="primary">获取验证码</el-button>
@@ -44,7 +47,7 @@
           <el-form>
             <el-row justify="space-between">
               <el-col :span="12">
-                <el-button size="large" style="width: 200px" type="primary">注册</el-button>
+                <el-button size="large" style="width: 200px" type="primary" @click="register">注册</el-button>
               </el-col>
               <el-col :span="8">
                 <el-link type="primary" @click="router.push('/')">使用已有帐户登录</el-link>
@@ -59,8 +62,9 @@
 
 <script setup>
 import router from "@/router";
-import {ref,reactive} from "vue";
-import {User,Lock,Notebook,Check} from "@element-plus/icons-vue";3
+import {ref,reactive,inject} from "vue";
+import {User,Lock,Notebook,Check,Files} from "@element-plus/icons-vue";3
+import {CommonApi,UserApi} from "@/api/api";
 
 const value = ref('');
 
@@ -94,8 +98,50 @@ const data = reactive({
       "country":"德国",
       "code":"+49",
     }
-  ]
+  ],
+});
+
+const user_info = ref({
+  username: '',
+  password: '',
+  name: '',
+  tel: '',
+  email: '',
+  verificationCode: '',
 })
+
+const isEmpty = (obj) => {
+  for (let item in obj) {
+    if (obj.hasOwnProperty(item)){
+      console.log("null");
+      return false;
+    }else{
+      return true;
+    }
+  }
+}
+
+const request = inject('request');
+
+const register = () => {
+  const response = request.post(UserApi.register,{
+    account: user_info.value.username,
+    password: user_info.value.password,
+    name: user_info.value.name,
+    phone: user_info.value.tel,
+    email: user_info.value.email,
+    type: 1,
+    cardNumber: 3201,
+  }).then(res => {
+    console.log(res);
+    if (res.code === 200) {
+      ElMessage.success(res.message);
+      router.push('/');
+    }else{
+      ElMessage.error(res.message);
+    }
+  })
+}
 
 </script>
 
