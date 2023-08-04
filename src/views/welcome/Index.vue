@@ -8,8 +8,8 @@
           </div>
           <div class="banner">
             <el-carousel height="auto" arrow="never">
-              <el-carousel-item style="height: auto" v-for="item in data.carouselImgUrl" :key="item">
-                <el-image :src="pic01" :fit="fill"></el-image>
+              <el-carousel-item style="height: auto" v-for="item in data.carouselImg" :key="item">
+                <el-image :src="item.url" :fit="fill"></el-image>
               </el-carousel-item>
             </el-carousel>
           </div>
@@ -30,14 +30,13 @@
 
 <script setup>
 import logo from '@/assets/img/logo-mini.png';
-import pic01 from '@/assets/img/carousel01.jpeg'
-import {reactive} from "vue";
+import {reactive,ref} from "vue";
 
 const data = reactive({
   logoUrl: logo,
-  carouselImgUrl: [
-    "@/assets/img/carousel01.jpeg",
-    "@/assets/img/carousel02.jpeg"
+  carouselImg: [
+    {url: new URL('@/assets/img/carousel01.jpeg',import.meta.url).href},
+    {url: new URL('@/assets/img/carousel02.jpeg',import.meta.url).href},
   ]
 })
 
