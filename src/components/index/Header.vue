@@ -9,7 +9,7 @@
     <el-dropdown trigger="click">
             <span class="el-dropdown-link">
               欢迎
-              {{store.auth.user}}
+              {{currentUser}}
               <el-icon class="el-icon--right">
                  <arrow-down/>
                </el-icon>
