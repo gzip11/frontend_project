@@ -5,7 +5,8 @@ let UserApi = {
     deleteUser : "/user/delete", //删除用户
     editUser : "/user/edit", //修改用户信息
     accountIsExist : "/user/isExistAccount", //判断账号是否存在
-    register:"/user/register",  //注册用户
+    register:"/register",  //注册用户
+    userInfo: "/user/info"//获取当前用户信息
 }
 
 // 通用模块相关接口

@@ -4,6 +4,7 @@ import request from '@/utils/request';
 
 import App from './App.vue'
 import router from './router'
+import axios from "axios";
 
 import '@/assets/reset.css'
 

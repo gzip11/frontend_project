@@ -3,7 +3,7 @@ import { ElLoading } from 'element-plus'
 
 let loadingInstance='';
 
-const baseURL = "http://localhost:8088";
+const baseURL = "/api";
 
 const request = axios.create({
     baseURL: baseURL,
@@ -14,9 +14,9 @@ const request = axios.create({
 
 request.interceptors.request.use(config => {
 
-    loadingInstance = ElLoading.service({
-        fullscreen: true,
-    })
+    // loadingInstance = ElLoading.service({
+    //     fullscreen: true,
+    // })
 
     config.headers['Content-Type'] = 'application/json;charset=utf-8';
     if(localStorage.getItem('token')){
@@ -31,7 +31,7 @@ request.interceptors.response.use(
     response => {
 
         // 关闭加载效果
-        loadingInstance.close()
+        //loadingInstance.close()
 
         if (response.status === 200) {
             return response.data

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-row :gutter="20">
+    <el-row :gutter="15">
       <el-col :span="6">
         <div class="left-container">
           <div class="logo">
@@ -9,13 +9,13 @@
           <div class="banner">
             <el-carousel height="auto" arrow="never">
               <el-carousel-item style="height: auto" v-for="item in data.carouselImg" :key="item">
-                <el-image :src="item.url" :fit="fill"></el-image>
+                <el-image :src="item.url"></el-image>
               </el-carousel-item>
             </el-carousel>
           </div>
         </div>
       </el-col>
-      <el-col :span="6" :offset="8">
+      <el-col :span="10" :offset="7">
         <div class="form-container">
           <router-view v-slot="{ Component }">
             <transition name="el-fade-in-linear" mode="out-in">

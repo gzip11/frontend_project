@@ -1,81 +1,96 @@
 <template>
-  <el-container class="layout-container">
-    <el-aside width="200px">
-      <div class="logo" style="height: 100px">
-        <h3>虚拟仿真实验室管理系统</h3>
-      </div>
+  <div class="home-container">
+    <el-container class="layout-container">
+      <el-aside width="200px">
+        <h1>虚拟仿真实验室管理系统</h1>
+        <Menu/>
+      </el-aside>
 
-    </el-aside>
-
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px">
-        <div class="toolbar">
-          <el-dropdown trigger="click">
-            <span class="el-dropdown-link">
-              欢迎
-              {{store.auth.user}}
-              <el-icon class="el-icon--right">
-                 <arrow-down/>
-               </el-icon>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item :icon="Close" @click="exitInfo">退出</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </el-header>
-
-      <el-main>
-        this is main
-      </el-main>
+      <el-container>
+        <el-header>
+          <div class="header">
+            <Header/>
+          </div>
+          <div class="tabs">
+            <Tabs/>
+          </div>
+        </el-header>
+        <el-main>
+          <router-view v-slot="{ Component }">
+            <transition name="el-fade-in-linear" mode="out-in">
+              <component :is="Component"></component>
+            </transition>
+          </router-view>
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
+  </div>
 </template>
 
 <script setup>
 import { ref,reactive } from 'vue';
-import { Menu as IconMenu, Message, Setting, ArrowDown, Close} from '@element-plus/icons-vue';
 import logo from '@/assets/img/logo-mini.png';
-import router from '@/router';
-import {userStore} from "@/stores";
-
-
-const store = userStore();
+import Header from "@/components/index/Header.vue";
+import Menu from "@/components/index/Menu.vue"
+import Tabs from "@/components/index/Tabs.vue";
 
 const logoUrl = reactive({
   logo
 })
 
-const exitInfo = () => {
-  ElMessageBox.confirm(
-      '确定退出登录?',
-      '警告',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
-  )
-      .then(() => {
-        ElMessage({
-          type: 'success',
-          message: '退出成功',
-        });
-        store.auth.user = null;
-        router.push('/welcome');
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: 'Delete canceled',
-        })
-      }
-  )
+const shadowGroup = ref([
+  {
+    name: 'Basic Shadow',
+    type: '',
+  },
+  {
+    name: 'Light Shadow',
+    type: 'light',
+  },
+  {
+    name: 'Lighter Shadow',
+    type: 'lighter',
+  },
+  {
+    name: 'Dark Shadow',
+    type: 'dark',
+  },
+])
+
+const getCssVarName = (type) => {
+  return `--el-box-shadow${type ? '-' : ''}${type}`
 }
+
+
+
+
 </script>
 
 <style scoped>
 
+.layout-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.el-aside {
+  background-color: #475669;
+}
+
+.el-header {
+  text-align: right;
+  font-size: 18px;
+  border-bottom: 1px solid #e1e1e1; /* 添加底部边框 */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  padding: 10px; /* 添加内边距 */
+}
+
+.el-main {
+  background-color: #99a9bf;
+}
+
+.el-aside {
+  height: 100vh;
+}
 </style>
