@@ -2,7 +2,6 @@
   <div class="home-container">
     <el-container class="layout-container">
       <el-aside width="200px">
-        <h1>虚拟仿真实验室管理系统</h1>
         <Menu/>
       </el-aside>
 
@@ -16,7 +15,7 @@
           </div>
         </el-header>
         <el-main>
-          <router-view v-slot="{ Component }">
+          <router-view v-slot="{ Component }" v-if="isRouterAlive">
             <transition name="el-fade-in-linear" mode="out-in">
               <component :is="Component"></component>
             </transition>
@@ -28,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref,reactive } from 'vue';
+import { ref,reactive,nextTick,provide } from 'vue';
 import logo from '@/assets/img/logo-mini.png';
 import Header from "@/components/index/Header.vue";
 import Menu from "@/components/index/Menu.vue"
@@ -61,8 +60,15 @@ const getCssVarName = (type) => {
   return `--el-box-shadow${type ? '-' : ''}${type}`
 }
 
+const isRouterAlive = ref(true);
+const reload = () => {
+  isRouterAlive.value = false;
+  nextTick(() => {
+    isRouterAlive.value = true;
+  });
+};
 
-
+provide("reload",reload);
 
 </script>
 
@@ -75,10 +81,13 @@ const getCssVarName = (type) => {
 }
 
 .el-aside {
-  background-color: #475669;
+  background-color: #fff;
+  width: 12rem;
 }
 
+
 .el-header {
+  height: 4rem;
   text-align: right;
   font-size: 18px;
   border-bottom: 1px solid #e1e1e1; /* 添加底部边框 */
@@ -88,6 +97,7 @@ const getCssVarName = (type) => {
 
 .el-main {
   background-color: #99a9bf;
+  height: calc(100vh - 4rem);
 }
 
 .el-aside {

@@ -1,11 +1,5 @@
 <template>
   <div class="toolbar">
-    <el-breadcrumb :separator-icon="ArrowRight">
-      <el-breadcrumb-item :to="{ path: '/home/dashboard' }">homepage</el-breadcrumb-item>
-      <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-      <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-      <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
-    </el-breadcrumb>
     <el-dropdown trigger="click">
             <span class="el-dropdown-link">
               欢迎
@@ -49,9 +43,9 @@ const exitInfo = () => {
         ElMessage({
           type: 'success',
           message: '退出成功',
-        });
-        store.auth.user = null;
+        })
         localStorage.removeItem('token')
+        store.auth.user = null;
         router.push('/welcome');
       })
       .catch(() => {

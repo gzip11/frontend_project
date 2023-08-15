@@ -3,7 +3,7 @@
     <div class="clearfix">
       <span>个人信息</span>
     </div>
-    <div class="profile">
+    <div class="profile" style="padding-top: 20px">
       <div class="profile-info">
         <el-descriptions v-for="(key,value) in user_info" :key="value">
           <el-descriptions-item :label="value">{{key}}</el-descriptions-item>

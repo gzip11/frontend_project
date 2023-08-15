@@ -24,6 +24,11 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: () => import('@/views/dashboard/Index.vue')
+        },
+        {
+          path: 'simulation_equipment',
+          name: 'simulation_equipment',
+          component: () => import('@/layout/lab/simulation_equipment/Index.vue')
         }
       ]
     },
@@ -38,7 +43,7 @@ const router = createRouter({
           component: () => import('@/components/login/LoginFrame.vue')
         },
         {
-          path: 'register',
+          path: '/register',
           name: 'welcome-register',
           component: () => import('@/components/register/RegisterFrame.vue')
         }
@@ -50,11 +55,10 @@ const router = createRouter({
 //添加路由守卫
 router.beforeEach((to,from,next) => {
   const store = userStore();
-  const account = jwtDecode(localStorage.getItem('token')).account;
+  //const account = jwtDecode(localStorage.getItem('token')).account;
   if (store.auth.user != null && to.name.startsWith("welcome-")){
     next('/home');
-  }else if (account == null && to.fullPath.startsWith("/home")){
-    //console.log(store.auth.user);
+  }else if (store.auth.user === "" && to.fullPath.startsWith("/home")){
     next('/');
   }else if (to.matched.length === 0){
     next('/');

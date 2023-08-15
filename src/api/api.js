@@ -15,7 +15,12 @@ let CommonApi={
     loadDictionary : "/dictionary/loadDictionary",
 }
 
+let lab = {
+    getAllEquipmentInfo: "/SimulationEquipment"
+}
+
 export {
     UserApi,
-    CommonApi
+    CommonApi,
+    lab
 }

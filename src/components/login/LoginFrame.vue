@@ -85,11 +85,9 @@ const login = () => {
       password: formData.value.password,
     }).then(res => {
       if (res.code === 200){
-        //console.log(res);
         const token = res.data.token;
         localStorage.setItem('token',token);
         const {account,email,intro,Name,phone} = jwtDecode(token);
-        //console.log(account,Name);
         store.auth.user = account;
         ElMessage.success(res.msg);
         router.push('/home');

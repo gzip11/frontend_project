@@ -3,7 +3,7 @@
     <div>
       <span>点击按钮即可注销您的账号</span>
     </div>
-    <div>
+    <div style="padding-top: 20px">
       <el-button type="danger" size="large" @click="centerDialogVisible=true">注销</el-button>
     </div>
     <el-dialog v-model="centerDialogVisible" title="警告" width="30%" align-center center>
@@ -26,6 +26,7 @@
 import {ref} from "vue";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
+import router from "@/router";
 
 const centerDialogVisible = ref(false)
 
@@ -46,13 +47,17 @@ const account = jwtDecode(localStorage.getItem('token')).account;
 
 const logout = () => {
   axios.post(`http://localhost:5173/api/user/logout/${userId}`).then(res => {
-    console.log("hello"+res.data);
-    if (res.data.code === 200){
-      centerDialogVisible.value = false;
-      checkAccountStatus();
-    }else{
-
-    }
+    //console.log("hello"+res.data);
+    // if (res.data.code === 200){
+    //   centerDialogVisible.value = false;
+    //   checkAccountStatus();
+    // }else{
+    //
+    // }
+    centerDialogVisible.value = false;
+    localStorage.removeItem('token');
+    ElMessage.warning("账号已成功注销");
+    router.push('/welcome');
   })
 
 }

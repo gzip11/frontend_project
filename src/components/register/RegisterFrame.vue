@@ -25,9 +25,11 @@
                   <el-option
                       v-for="item in data.tel_region_code"
                       :key="item.code"
-                      :label="item.country"
+                      :label="item.code"
                       :value="item.code"
                   >
+                    <span style="float: left">{{item.code}}</span>
+                    <span style="float: right;padding-left: 10px">{{item.country}}</span>
                   </el-option>
                 </el-select>
               </template>
@@ -68,32 +70,32 @@ const value = ref('');
 const data = reactive({
   tel_region_code: [
     {
-      "country":"中国",
-      "code":"+86",
+      country:"中国",
+      code:"+86",
     },
     {
-      "country":"美国",
-      "code":"+1",
+      country:"美国",
+      code:"+1",
     },
     {
-      "country":"印度",
-      "code":"+91",
+      country:"印度",
+      code:"+91",
     },
     {
-      "country":"巴西",
-      "code":"+55",
+      country:"巴西",
+      code:"+55",
     },
     {
-      "country":"俄罗斯",
-      "code":"+7",
+      country:"俄罗斯",
+      code:"+7",
     },
     {
-      "country":"日本",
-      "code":"+81",
+      country:"日本",
+      code:"+81",
     },
     {
-      "country":"德国",
-      "code":"+49",
+      country:"德国",
+      code:"+49",
     }
   ],
 });
