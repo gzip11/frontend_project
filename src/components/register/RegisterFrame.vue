@@ -5,20 +5,27 @@
     </div>
     <div class="register-form">
       <div class="form-item">
-        <el-form label-width="70px" @validate="onValidate" :model="user_info" :rules="rules" :ref="formRef">
-          <el-form-item label="账号">
+        <el-form
+            label-width="70px"
+            @validate="onValidate"
+            :model="user_info"
+            :rules="rules"
+            ref="formRef"
+            :hide-required-asterisk="true"
+        >
+          <el-form-item label="账号" prop="account">
             <el-input v-model="user_info.account" :prefix-icon="User" size="large" clearable/>
           </el-form-item>
-          <el-form-item label="密码">
+          <el-form-item label="密码" prop="password">
             <el-input type="password" show-password v-model="user_info.password" :prefix-icon="Lock" size="large" clearable/>
           </el-form-item>
-          <el-form-item label="确认密码">
+          <el-form-item label="确认密码" prop="confirm_password">
             <el-input type="password" show-password v-model="user_info.confirm_password" :prefix-icon="Check" size="large" clearable/>
           </el-form-item>
-          <el-form-item label="姓名">
+          <el-form-item label="姓名" prop="name">
             <el-input v-model="user_info.name" :prefix-icon="Notebook" size="large" clearable/>
           </el-form-item>
-          <el-form-item label="手机号">
+          <el-form-item label="手机号" prop="tel">
             <el-input v-model="user_info.tel" placeholder="请输入手机号" class="input-with-select" clearable>
               <template #prepend>
                 <el-select size="large" v-model="value" style="width: 80px">
@@ -35,9 +42,9 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item label="验证码">
+          <el-form-item label="验证码" prop="code">
             <el-col :span="6">
-              <el-input placeholder="请输入验证码" v-model="user_info.verificationCode" size="large" style="width: 180px" clearable/>
+              <el-input placeholder="请输入验证码" v-model="user_info.code" size="large" style="width: 180px" clearable/>
             </el-col>
             <el-col :span="6" :offset="9">
               <el-button size="large" type="primary">获取验证码</el-button>
@@ -106,10 +113,10 @@ const user_info = ref({
   confirm_password: '',
   name:'',
   tel: '',
-  verificationCode: '',
+  code: '',
 })
 
-const isEmpty = (obj) => {
+/*const isEmpty = (obj) => {
   for (let item in obj) {
     if (obj.hasOwnProperty(item)){
       console.log("null");
@@ -118,10 +125,10 @@ const isEmpty = (obj) => {
       return true;
     }
   }
-}
+}*/
 
 const validateUserName = (rule,value,callback) => {
-  if (value === ""){
+  if (value === ''){
     callback(new Error('请输入用户名'));
   }else if(!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)){
     callback(new Error('用户不能包含特殊字符，是能是中文或者英文'));
@@ -133,7 +140,7 @@ const validateUserName = (rule,value,callback) => {
 const validatePassWord = (rule,value,callback) => {
   if (value === ''){
     callback(new Error('请再次输入密码'));
-  }else if(value !== user_info.value.confirm_password){
+  }else if(value !== user_info.value.password){
     callback(new Error('两次输入的密码不一致'));
   }else {
     callback()
@@ -150,7 +157,7 @@ const validateTel = (rule,value,callback) => {
   }
 }
 
-const formRef  = ref();
+const formRef  = ref(null);
 const isTelValid = ref(false)
 const clodTime = ref(0)
 
@@ -162,7 +169,7 @@ const onValidate = (prop,isValid) => {
 
 
 const rules = reactive({
-  username: [
+  account: [
     { validator: validateUserName, trigger: ['blur','change'] },
     { min: 2, max: 10, message: '用户名的长度必须在2到8个字符之间', trigger: ['blur','change']}
   ],
@@ -173,9 +180,11 @@ const rules = reactive({
   confirm_password: [
     { validator: validatePassWord, trigger: ['blur','change'] }
   ],
+  name: [
+    {required: true,message: '请输入姓名', trigger: 'blur'},
+  ],
   tel: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { type: 'tel', message: '请输入正确的手机号码', trigger: ['blur','change'] }
+    { validator: validateTel, trigger: ['blur','change'] }
   ],
   code: [
     { required: true, message: '请输入获取的验证码',trigger: 'blur' }
@@ -186,18 +195,24 @@ const rules = reactive({
 const request = inject('request');
 
 const register = () => {
-  const response = request.post(UserApi.register,{
-    account: user_info.value.account,
-    password: user_info.value.password,
-    name: user_info.value.name,
-    phone: user_info.value.tel,
-  }).then(res => {
-    //console.log(res);
-    if (res.code === 200) {
-      ElMessage.success(res.msg);
-      router.push('/');
+  formRef.value.validate((isValid) => {
+    if (isValid){
+      const response = request.post(UserApi.register,{
+        account: user_info.value.account,
+        password: user_info.value.password,
+        name: user_info.value.name,
+        phone: user_info.value.tel,
+      }).then(res => {
+        //console.log(res);
+        if (res.code === 200) {
+          ElMessage.success(res.msg);
+          router.push('/');
+        }else{
+          ElMessage.error(res.msg);
+        }
+      })
     }else{
-      ElMessage.error(res.msg);
+      ElMessage.warning("请填写完整的信息");
     }
   })
 }
@@ -215,6 +230,10 @@ const register = () => {
 
 .head-title h1 {
   text-align: center;
+}
+
+.register-form {
+  padding-top: 20px;
 }
 
 .form-item {

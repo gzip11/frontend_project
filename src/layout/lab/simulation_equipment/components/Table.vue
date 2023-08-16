@@ -23,10 +23,10 @@
     <el-table-column align="center" min-width="100%" prop="equipmentDesc" label="备注"/>
     <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间" :formatter="formatDate"/>
     <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间" :formatter="formatDate"/>
-    <el-table-column width="220%" label="操作" fixed="right" align="center">
+    <el-table-column width="150%" label="操作" fixed="right" align="center">
       <template #default="scope">
           <el-button type="primary" size="small" @click="tableData.dialogEditVisible = true && saveId(scope)">编辑</el-button>
-          <el-button type="success" size="small" @click="tableData.dialogInfoVisible = true">详细信息</el-button>
+<!--          <el-button type="success" size="small" @click="tableData.dialogInfoVisible = true">详细信息</el-button>-->
           <el-button type="danger" size="small" @click="deleteData(scope)">删除</el-button>
       </template>
     </el-table-column>
@@ -96,9 +96,8 @@
     </template>
   </el-dialog>
   <!--详细信息对话框-->
-  <el-dialog v-model="tableData.dialogInfoVisible" title="设备详细信息" width="500px">
-
-  </el-dialog>
+<!--  <el-dialog v-model="tableData.dialogInfoVisible" title="设备详细信息" width="500px">-->
+<!--  </el-dialog>-->
 
 </template>
 
@@ -143,7 +142,7 @@ const tableData = reactive({
     equipment_desc: '',
   },
   dialogEditVisible: false,
-  dialogInfoVisible: false,
+  // dialogInfoVisible: false,
 });
 
 const store = toRefs(useSearchStore());
