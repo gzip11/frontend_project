@@ -21,8 +21,8 @@
     <el-table-column align="center" min-width="100%" prop="purpose" label="使用场景"/>
     <el-table-column align="center" min-width="100%" prop="labId" label="所属实验室"/>
     <el-table-column align="center" min-width="100%" prop="equipmentDesc" label="备注"/>
-    <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间"/>
-    <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间"/>
+    <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间" :formatter="formatDate"/>
+    <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间" :formatter="formatDate"/>
     <el-table-column width="220%" label="操作" fixed="right" align="center">
       <template #default="scope">
           <el-button type="primary" size="small" @click="tableData.dialogEditVisible = true && saveId(scope)">编辑</el-button>
@@ -183,6 +183,11 @@ const handleCurrentChange = (current) => {
 const listLoading = ref(true);
 
 const refresh = inject("reload");
+
+const formatDate = (row,column,cellValue,index) => {
+  let s = new Date(cellValue).toLocaleString();
+  return s;
+}
 
 const getData = () => {
   axios.get('http://localhost:5173/api/SimulationEquipment').then(res => {
