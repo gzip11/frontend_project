@@ -12,9 +12,6 @@
 <script setup>
 import Filter from "@/layout/lab/simulation_equipment/components/Filter.vue";
 import Table from "@/layout/lab/simulation_equipment/components/Table.vue";
-import {inject} from "vue";
-
-console.log(inject('result'));
 
 </script>
 

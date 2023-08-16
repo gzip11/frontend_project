@@ -80,16 +80,34 @@ const validateSearchInfo = () => {
   }
 }
 
+/**
+ * @typedef {Object} InsertInfo
+ * @property {string} equipment_name
+ * @property {string} equipment_number
+ * @property {number} equipment_type
+ * @property {string} system_software
+ * @property {string} system_version
+ * @property {string} equipment_supplier
+ * @property {number} equipment_status
+ * @property {string} equipment_purpose
+ * @property {number} lab_id
+ * @property {string} equipment_desc
+ */
+
+/**
+ * @type {InsertInfo}
+ */
+
 const insertInfo = reactive({
   equipment_name: '',
   equipment_number: '',
-  equipment_type: '',
+  equipment_type: 1,
   system_software: '',
   system_version: '',
   equipment_supplier: '',
-  equipment_status: '',
+  equipment_status: 0,
   equipment_purpose: '',
-  lab_id: '',
+  lab_id: 0,
   equipment_desc: '',
 })
 
@@ -111,21 +129,23 @@ const searchByNameAndNumber = async() => {
 }
 
 
-
 const insertData = () => {
+  //console.log(insertInfo);
   axios.post('http://localhost:5173/api/SimulationEquipment',{
     name: insertInfo.equipment_name,
     number: insertInfo.equipment_number,
     type: insertInfo.equipment_type,
-    software_system: insertInfo.system_software,
-    version_number: insertInfo.system_version,
+    softwareSystem: insertInfo.system_software,
+    versionNumber: insertInfo.system_version,
     supplier: insertInfo.equipment_supplier,
-    status: insertInfo.equipment_purpose,
-    lab_id: insertInfo.lab_id,
+    status: insertInfo.equipment_status,
+    purpose: insertInfo.equipment_purpose,
+    labId: insertInfo.lab_id,
     thumbnail: insertInfo.equipment_desc
   }).then(res => {
     ElMessage.success("添加成功");
     dialogInsertVisible.value = false;
+    refresh();
     /*if (res.code === 200){
       //console.log(res);
       ElMessage.success(res.msg);

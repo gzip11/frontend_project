@@ -21,8 +21,8 @@
     <el-table-column align="center" min-width="100%" prop="purpose" label="使用场景"/>
     <el-table-column align="center" min-width="100%" prop="labId" label="所属实验室"/>
     <el-table-column align="center" min-width="100%" prop="thumbnail" label="备注"/>
-    <el-table-column align="center" min-width="100%" prop="createTime" label="添加时间"/>
-    <el-table-column align="center" min-width="100%" prop="updateTime" label="更新时间"/>
+    <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间"/>
+    <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间"/>
     <el-table-column width="220%" label="操作" fixed="right" align="center">
       <template #default="scope">
           <el-button type="primary" size="small" @click="tableData.dialogEditVisible = true && saveId(scope)">编辑</el-button>
@@ -113,16 +113,33 @@ import {toRefs} from "vue";
 
 const tableData = reactive({
   List: [],
+  /**
+   * @typedef {Object} InsertInfo
+   * @property {string} equipment_name
+   * @property {string} equipment_number
+   * @property {number} equipment_type
+   * @property {string} system_software
+   * @property {string} system_version
+   * @property {string} equipment_supplier
+   * @property {number} equipment_status
+   * @property {string} equipment_purpose
+   * @property {number} lab_id
+   * @property {string} equipment_desc
+   */
+
+  /**
+   * @type {updateEquipmentInfo}
+   */
   updateEquipmentInfo: {
     equipment_name: '',
     equipment_number: '',
-    equipment_type: '',
+    equipment_type: 1,
     system_software: '',
     system_version: '',
     equipment_supplier: '',
-    equipment_status: '',
+    equipment_status: 0,
     equipment_purpose: '',
-    lab_id: '',
+    lab_id: 0,
     equipment_desc: '',
   },
   dialogEditVisible: false,
@@ -133,9 +150,9 @@ const store = toRefs(useSearchStore());
 tableData.List = store.searchResult;
 
 
-let pageSize = ref(10);
-let currentPage = ref(1);
-const total = ref(9);
+const pageSize = ref(10);
+const currentPage = ref(1);
+const total = ref(0);
 
 const handleSizeChange = (size) => {
   pageSize.value = size;
@@ -146,6 +163,7 @@ const handleSizeChange = (size) => {
   }).then(res => {
     //console.log(res);
     tableData.List = res.data.data.records;
+    total.value = res.data.data.total;
   })
 }
 
@@ -158,6 +176,7 @@ const handleCurrentChange = (current) => {
   }).then(res => {
     //console.log(res);
     tableData.List = res.data.data.records;
+    total.value = res.data.data.total;
   })
 }
 
@@ -190,22 +209,23 @@ const updateData = () => {
     name: tableData.updateEquipmentInfo.equipment_name,
     number: tableData.updateEquipmentInfo.equipment_number,
     type: tableData.updateEquipmentInfo.equipment_type,
-    software_system: tableData.updateEquipmentInfo.system_software,
-    version_number: tableData.updateEquipmentInfo.system_version,
+    softwareSystem: tableData.updateEquipmentInfo.system_software,
+    versionNumber: tableData.updateEquipmentInfo.system_version,
     supplier: tableData.updateEquipmentInfo.equipment_supplier,
-    status: tableData.updateEquipmentInfo.equipment_purpose,
-    lab_id: tableData.updateEquipmentInfo.lab_id,
+    status: tableData.updateEquipmentInfo.equipment_status,
+    purpose: tableData.updateEquipmentInfo.equipment_purpose,
+    labId: tableData.updateEquipmentInfo.lab_id,
     thumbnail: tableData.updateEquipmentInfo.equipment_desc
   }).then(res => {
     //console.log(res);
     if (res.data.code === 200){
       ElMessage.success(res.data.msg);
       tableData.dialogEditVisible = false;
-      getData();
+      getPageData();
     }else {
       ElMessage.error(res.data.msg);
       tableData.dialogEditVisible = false;
-      getData();
+      getPageData();
     }
   })
 }
@@ -224,7 +244,7 @@ const deleteData = (row) => {
     const id = toRaw(row.row.simulationEquipmentId);
     axios.delete(`http://localhost:5173/api/SimulationEquipment/${id}`).then(res => {
       ElMessage.success("删除成功");
-      getData();
+      getPageData();
       // if (res.code === 200){
       //   ElMessage.success({
       //     type: 'success',
@@ -235,8 +255,18 @@ const deleteData = (row) => {
   })
 }
 
+const getPageData = () => {
+  axios.post('http://localhost:5173/api/SimulationEquipment/page',{
+    page: currentPage.value,
+    pageSize: pageSize.value
+  }).then(res => {
+    tableData.List = res.data.data.records;
+    total.value = res.data.data.total;
+  });
+};
+
 onMounted(() => {
-  getData();
+  getPageData();
 })
 
 </script>
