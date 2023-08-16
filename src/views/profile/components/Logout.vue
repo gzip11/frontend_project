@@ -27,6 +27,9 @@ import {ref} from "vue";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
 import router from "@/router";
+import {userStore} from "@/stores";
+
+const  store = userStore();
 
 const centerDialogVisible = ref(false)
 
@@ -68,7 +71,7 @@ const checkAccountStatus = async () => {
     if (response.data == null){
       console.log("当前用户已被注销");
       localStorage.removeItem('token');
-      router.push('/welcome');
+      await router.push('/welcome');
     }
   }catch (error){
     console.error('Error',error);

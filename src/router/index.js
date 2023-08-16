@@ -55,10 +55,10 @@ const router = createRouter({
 //添加路由守卫
 router.beforeEach((to,from,next) => {
   const store = userStore();
-  //const account = jwtDecode(localStorage.getItem('token')).account;
+  const isLogin = localStorage.getItem('token');
   if (store.auth.user != null && to.name.startsWith("welcome-")){
     next('/home');
-  }else if (store.auth.user === "" && to.fullPath.startsWith("/home")){
+  }else if (isLogin === null && to.fullPath.startsWith("/home")){
     next('/');
   }else if (to.matched.length === 0){
     next('/');
