@@ -20,7 +20,7 @@
     <el-table-column align="center" min-width="100%" prop="status" label="设备状态"/>
     <el-table-column align="center" min-width="100%" prop="purpose" label="使用场景"/>
     <el-table-column align="center" min-width="100%" prop="labId" label="所属实验室"/>
-    <el-table-column align="center" min-width="100%" prop="thumbnail" label="备注"/>
+    <el-table-column align="center" min-width="100%" prop="equipmentDesc" label="备注"/>
     <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间"/>
     <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间"/>
     <el-table-column width="220%" label="操作" fixed="right" align="center">
@@ -215,7 +215,7 @@ const updateData = () => {
     status: tableData.updateEquipmentInfo.equipment_status,
     purpose: tableData.updateEquipmentInfo.equipment_purpose,
     labId: tableData.updateEquipmentInfo.lab_id,
-    thumbnail: tableData.updateEquipmentInfo.equipment_desc
+    equipmentDesc: tableData.updateEquipmentInfo.equipment_desc
   }).then(res => {
     //console.log(res);
     if (res.data.code === 200){
@@ -260,6 +260,7 @@ const getPageData = () => {
     page: currentPage.value,
     pageSize: pageSize.value
   }).then(res => {
+    console.log(res.data.data.records);
     tableData.List = res.data.data.records;
     total.value = res.data.data.total;
   });

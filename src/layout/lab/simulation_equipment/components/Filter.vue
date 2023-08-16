@@ -141,7 +141,7 @@ const insertData = () => {
     status: insertInfo.equipment_status,
     purpose: insertInfo.equipment_purpose,
     labId: insertInfo.lab_id,
-    thumbnail: insertInfo.equipment_desc
+    equipmentDesc: insertInfo.equipment_desc
   }).then(res => {
     ElMessage.success("添加成功");
     dialogInsertVisible.value = false;
