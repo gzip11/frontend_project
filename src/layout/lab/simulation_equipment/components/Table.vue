@@ -1,36 +1,44 @@
 <template>
+  <el-button :icon="Download" type="primary" @click="tableExport">导出设备信息</el-button>
+  <el-button :icon="Delete" type="danger" @click="batchDeletetion">删除选中设备</el-button>
 
-  <el-table
-      highlight-current-row
-      fit
-      :data="tableData.List"
-      style="width: 100%;"
-      border
-      :v-loading="listLoading"
-      :default-sort="{ prop:'simulationEquipmentId',order:'descending'}"
-  >
-    <el-table-column fixed type="selection"/>
-    <el-table-column align="center" prop="simulationEquipmentId" label="ID" sortable/>
-    <el-table-column align="center" min-width="100%" prop="name" label="设备名称" />
-    <el-table-column align="center" min-width="100%" prop="number" label="设备编号"/>
-    <el-table-column align="center" min-width="100%" prop="type" label="设备类型"/>
-    <el-table-column align="center" min-width="100%" prop="softwareSystem" label="操作系统"/>
-    <el-table-column align="center" min-width="100%" prop="versionNumber" label="版本号"/>
-    <el-table-column align="center" min-width="100%" prop="supplier" label="供应商"/>
-    <el-table-column align="center" min-width="100%" prop="status" label="设备状态"/>
-    <el-table-column align="center" min-width="100%" prop="purpose" label="使用场景"/>
-    <el-table-column align="center" min-width="100%" prop="labId" label="所属实验室"/>
-    <el-table-column align="center" min-width="100%" prop="equipmentDesc" label="备注"/>
-    <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间" :formatter="formatDate"/>
-    <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间" :formatter="formatDate"/>
-    <el-table-column width="150%" label="操作" fixed="right" align="center">
-      <template #default="scope">
+  <div class="table-container" style="padding-top: 20px">
+    <el-table
+        highlight-current-row
+        fit
+        :data="tableData.List"
+        style="width: 100%;"
+        border
+        id="el-table"
+        ref="tableRef,multipleTableRef"
+        @selection-change="handleSelection"
+        :v-loading="listLoading"
+        :default-sort="{ prop:'simulationEquipmentId',order:'descending'}"
+    >
+      <el-table-column fixed type="selection"/>
+      <el-table-column align="center" prop="simulationEquipmentId" label="ID" sortable/>
+      <el-table-column align="center" min-width="100%" prop="name" label="设备名称" />
+      <el-table-column align="center" min-width="100%" prop="number" label="设备编号"/>
+      <el-table-column align="center" min-width="100%" prop="type" label="设备类型"/>
+      <el-table-column align="center" min-width="100%" prop="softwareSystem" label="操作系统"/>
+      <el-table-column align="center" min-width="100%" prop="versionNumber" label="版本号"/>
+      <el-table-column align="center" min-width="100%" prop="supplier" label="供应商"/>
+      <el-table-column align="center" min-width="100%" prop="status" label="设备状态"/>
+      <el-table-column align="center" min-width="100%" prop="purpose" label="使用场景"/>
+      <el-table-column align="center" min-width="100%" prop="labId" label="所属实验室"/>
+      <el-table-column align="center" min-width="100%" prop="equipmentDesc" label="备注"/>
+      <el-table-column align="center" min-width="200%" prop="createTime" label="添加时间" :formatter="formatDate"/>
+      <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间" :formatter="formatDate"/>
+      <el-table-column width="150%" label="操作" fixed="right" align="center">
+        <template #default="scope">
           <el-button type="primary" size="small" @click="tableData.dialogEditVisible = true && saveId(scope)">编辑</el-button>
-<!--          <el-button type="success" size="small" @click="tableData.dialogInfoVisible = true">详细信息</el-button>-->
+          <!--          <el-button type="success" size="small" @click="tableData.dialogInfoVisible = true">详细信息</el-button>-->
           <el-button type="danger" size="small" @click="deleteData(scope)">删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+
 
   <!--分页器-->
   <el-pagination
@@ -99,15 +107,28 @@
 <!--  <el-dialog v-model="tableData.dialogInfoVisible" title="设备详细信息" width="500px">-->
 <!--  </el-dialog>-->
 
+  <!--导出信息对话框-->
+  <el-dialog v-model="exportTable.dialog" title="导出数据到表格">
+    <el-input v-model="exportTable.fileName" placeholder="请输入导出文件名"/>
+    <el-alert type="info" title="默认文件名为（导出测试）" :closable="false" style="padding-top: 10px"/>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="exportTable.dialog = false">取消</el-button>
+        <el-button type="primary" @click="save">导出</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script setup>
-import {reactive,ref,onMounted,toRaw,inject,provide,computed} from "vue";
+import {reactive,ref,toRefs,nextTick,getCurrentInstance,onMounted,toRaw,inject} from "vue";
 import axios from "axios";
 import {ElMessage,ElMessageBox} from "element-plus";
-import {lab} from "@/api/api";
+import {Download,Delete} from "@element-plus/icons-vue";
 import {useSearchStore} from "@/stores";
-import {toRefs} from "vue";
+import FileSaver from 'file-saver'
+import * as XSLX from 'xlsx'
 
 
 const tableData = reactive({
@@ -144,6 +165,85 @@ const tableData = reactive({
   dialogEditVisible: false,
   // dialogInfoVisible: false,
 });
+
+const exportTable = reactive({
+  List: [],
+  dialog: false,//对话框显示与否
+  fileName: ''//自定义文件名
+});
+
+
+//用于访问组件实例
+const { proxy } = getCurrentInstance();
+
+const { List,dialog,fileName } = toRefs(exportTable);
+
+//表格导出到excel
+const tableExport = () => {
+  const selectList = proxy?.$refs.tableRef.getSelectionRows();
+  if (selectList){
+    exportTable.List = proxy?.$refs.tableRef.getSelectionRows();
+  }
+  exportTable.dialog = true;
+}
+
+const save = () => {
+  nextTick(() => {
+    let filename = '';
+    const xlsxParam = { raw:true }
+    const elTable = XSLX.utils.table_to_book(document.getElementById('el-table'),xlsxParam);
+    if (exportTable.fileName === ''){
+      filename = '导出测试.xlsx'
+    }else {
+      filename = exportTable.fileName += '.xlsx'
+    }
+    const wbout = XSLX.write(elTable,{bookType: 'xlsx', bookSST: true, type: 'array'});
+    try {
+      FileSaver.saveAs(new Blob([wbout],{type: 'application/octet-stream'}),filename);
+    }catch (e) {
+      if (typeof console !== 'undefined'){
+        console.log(e,wbout);
+      }
+    }
+    return wbout
+  })
+}
+
+//批量删除
+let batchDel = [];
+const multipleTableRef = ref('');
+//获取选中列的id
+const handleSelection = (val) => {
+  batchDel = [];
+  val.forEach(item => {
+    batchDel.push(item.simulationEquipmentId);
+    //console.log(item.simulationEquipmentId);
+  })
+}
+
+const batchDeletetion = () => {
+  ElMessageBox.confirm(
+      "此操作将会批量删除您选中的数据，是否继续？",
+      "警告",
+      {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+  ).then(() => {
+    //请求接口
+    axios.post('http://localhost:5173/api/SimulationEquipment/BulkDelete',batchDel).then(res => {
+      if (res.data.code === 200){
+        ElMessage.success(res.data.msg);
+        getPageData();
+      }else {
+        ElMessage.error("删除失败");
+      }
+    })
+  })
+}
+
+
 
 const store = toRefs(useSearchStore());
 tableData.List = store.searchResult;
@@ -264,7 +364,7 @@ const getPageData = () => {
     page: currentPage.value,
     pageSize: pageSize.value
   }).then(res => {
-    console.log(res.data.data.records);
+    //console.log(res.data.data.records);
     tableData.List = res.data.data.records;
     total.value = res.data.data.total;
   });

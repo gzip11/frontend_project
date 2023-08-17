@@ -47,7 +47,12 @@
               <el-input placeholder="请输入验证码" v-model="user_info.code" size="large" style="width: 180px" clearable/>
             </el-col>
             <el-col :span="6" :offset="9">
-              <el-button size="large" type="primary">获取验证码</el-button>
+              <el-button
+                  size="large"
+                  type="primary"
+                  @click="getCode"
+                  :disabled="!isTelValid || coldTime > 0"
+              >{{coldTime > 0 ? '请稍后' + coldTime + '秒后再试' : '获取验证码'}}</el-button>
             </el-col>
           </el-form-item>
           <el-form>
@@ -71,6 +76,7 @@ import router from "@/router";
 import {ref,reactive,inject} from "vue";
 import {User,Lock,Notebook,Check,Files} from "@element-plus/icons-vue";
 import {UserApi} from "@/api/api";
+import axios from "axios";
 
 const value = ref('');
 
@@ -116,17 +122,6 @@ const user_info = ref({
   code: '',
 })
 
-/*const isEmpty = (obj) => {
-  for (let item in obj) {
-    if (obj.hasOwnProperty(item)){
-      console.log("null");
-      return false;
-    }else{
-      return true;
-    }
-  }
-}*/
-
 const validateUserName = (rule,value,callback) => {
   if (value === ''){
     callback(new Error('请输入用户名'));
@@ -159,14 +154,13 @@ const validateTel = (rule,value,callback) => {
 
 const formRef  = ref(null);
 const isTelValid = ref(false)
-const clodTime = ref(0)
+const coldTime = ref(0)
 
 const onValidate = (prop,isValid) => {
   if (prop === 'tel'){
     isTelValid.value = isValid;
   }
 }
-
 
 const rules = reactive({
   account: [
@@ -191,7 +185,6 @@ const rules = reactive({
   ]
 });
 
-
 const request = inject('request');
 
 const register = () => {
@@ -202,8 +195,8 @@ const register = () => {
         password: user_info.value.password,
         name: user_info.value.name,
         phone: user_info.value.tel,
+        code: user_info.value.code
       }).then(res => {
-        //console.log(res);
         if (res.code === 200) {
           ElMessage.success(res.msg);
           router.push('/');
@@ -213,6 +206,23 @@ const register = () => {
       })
     }else{
       ElMessage.warning("请填写完整的信息");
+    }
+  })
+}
+
+//获取手机验证码
+const getCode = () => {
+  coldTime.value = 60;
+  axios.post('http://localhost:5173/api/sendMsg',{
+    phone: user_info.value.tel
+  }).then(res => {
+    //console.log(res);
+    if (res.data.code === 200){
+      ElMessage.success(res.data.msg);
+      setInterval(() => coldTime.value--,1000);
+    }else{
+      ElMessage.warning(res.data.msg);
+      coldTime.value = 0;
     }
   })
 }

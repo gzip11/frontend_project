@@ -5,8 +5,6 @@
     <el-button type="primary" :icon="Search" @click="searchByNameAndNumber">查询</el-button>
     <el-button type="warning" :icon="Refresh" @click="refresh">刷新</el-button>
     <el-button type="primary" :icon="EditPen" @click="dialogInsertVisible=true">添加设备</el-button>
-    <el-button type="primary" :icon="Download">导出设备信息</el-button>
-    <el-button type="danger" :icon="Delete">删除所选中设备</el-button>
   </div>
   <!--添加信息对话框-->
   <el-dialog v-model="dialogInsertVisible" title="添加一个新设备" width="500px">
@@ -61,7 +59,7 @@
 </template>
 
 <script setup>
-import {Search,EditPen,Download,Delete,Refresh} from '@element-plus/icons-vue'
+import {Search,EditPen,Refresh} from '@element-plus/icons-vue'
 import {reactive,ref,provide,inject} from "vue";
 import axios from "axios";
 import {useSearchStore} from "@/stores";
@@ -152,6 +150,7 @@ const insertData = () => {
     }*/
   })
 }
+
 
 </script>
 

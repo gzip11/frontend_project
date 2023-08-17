@@ -62,7 +62,6 @@ const logout = () => {
     ElMessage.warning("账号已成功注销");
     router.push('/welcome');
   })
-
 }
 
 const checkAccountStatus = async () => {
