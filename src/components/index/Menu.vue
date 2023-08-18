@@ -13,16 +13,16 @@
     <el-sub-menu>
       <template #title>
         <el-icon><operation/></el-icon>
-        <span>设备管理</span>
+        <span>实验室管理</span>
       </template>
-      <el-menu-item @click="this.$router.push('/home/simulation_equipment')">仿真设备管理</el-menu-item>
+      <el-menu-item @click="this.$router.push('/home/simulation_equipment')">虚拟仿真设备管理</el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import {House,User,UserFilled,Menu,Operation} from '@element-plus/icons-vue'
+import {House,Operation} from '@element-plus/icons-vue'
 
 const isCollapse = ref(false)
 

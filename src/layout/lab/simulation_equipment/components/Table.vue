@@ -1,6 +1,6 @@
 <template>
-  <el-button :icon="Download" type="primary" @click="tableExport">导出设备信息</el-button>
-  <el-button :icon="Delete" type="danger" @click="batchDeletetion">删除选中设备</el-button>
+  <el-button :icon="Download" type="success" @click="tableExport">导出设备信息到Excel</el-button>
+  <el-button :icon="Delete" type="danger" @click="batchDeletetion">删除已选中设备</el-button>
 
   <div class="table-container" style="padding-top: 20px">
     <el-table
@@ -8,8 +8,8 @@
         fit
         :data="tableData.List"
         style="width: 100%;"
-        border
         id="el-table"
+        stripe="true"
         ref="tableRef,multipleTableRef"
         @selection-change="handleSelection"
         :v-loading="listLoading"
@@ -31,7 +31,7 @@
       <el-table-column align="center" min-width="200%" prop="updateTime" label="更新时间" :formatter="formatDate"/>
       <el-table-column width="150%" label="操作" fixed="right" align="center">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="tableData.dialogEditVisible = true && saveId(scope)">编辑</el-button>
+          <el-button type="success" size="small" @click="tableData.dialogEditVisible = true && saveId(scope)">编辑</el-button>
           <!--          <el-button type="success" size="small" @click="tableData.dialogInfoVisible = true">详细信息</el-button>-->
           <el-button type="danger" size="small" @click="deleteData(scope)">删除</el-button>
         </template>
@@ -50,7 +50,6 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       style="padding-top: 20px"
-      background
   />
 
   <!--修改设备信息对话框-->

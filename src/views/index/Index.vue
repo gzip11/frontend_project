@@ -87,6 +87,7 @@ provide("reload",reload);
 
 
 .el-header {
+  background-color: #D5FFD0;
   height: 4rem;
   text-align: right;
   font-size: 18px;
@@ -96,7 +97,7 @@ provide("reload",reload);
 }
 
 .el-main {
-  background-color: #99a9bf;
+  background-color: #279EFF;
   height: calc(100vh - 4rem);
 }
 

@@ -2,9 +2,9 @@
   <div class="filter-container">
     <el-input v-model="searchInfo.equipment_name" size="large" placeholder="输入设备名称" style="width: 200px"/>
     <el-input v-model="searchInfo.equipment_no" size="large" placeholder="输入设备编号" style="width: 180px;padding-left: 10px"/>
-    <el-button type="primary" :icon="Search" @click="searchByNameAndNumber">查询</el-button>
-    <el-button type="warning" :icon="Refresh" @click="refresh">刷新</el-button>
-    <el-button type="primary" :icon="EditPen" @click="dialogInsertVisible=true">添加设备</el-button>
+    <el-button type="success" :icon="Search" @click="searchByNameAndNumber">查询设备</el-button>
+    <el-button type="warning" :icon="Refresh" @click="refresh">刷新设备列表</el-button>
+    <el-button type="success" :icon="EditPen" @click="dialogInsertVisible=true">添加新设备</el-button>
   </div>
   <!--添加信息对话框-->
   <el-dialog v-model="dialogInsertVisible" title="添加一个新设备" width="500px">
