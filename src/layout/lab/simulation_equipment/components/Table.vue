@@ -10,7 +10,7 @@
         style="width: 100%;"
         id="el-table"
         stripe="true"
-        ref="tableRef,multipleTableRef"
+        ref="tableRef"
         @selection-change="handleSelection"
         :v-loading="listLoading"
         :default-sort="{ prop:'simulationEquipmentId',order:'descending'}"
